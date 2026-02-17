@@ -1,236 +1,185 @@
 # CE49X: Introduction to Computational Thinking and Data Science for Civil Engineers
-## Lab Assignment 2: Analyzing Career Pathways of Bogazici CE Graduates
+## Lab 2: Where Do Bogazici CE Graduates End Up?
 ### Spring 2026 | Dr. Eyuphan Koc | Bogazici University
 
 ---
 
-**Due Date:** One week from the lab session
+**Due Date:** Two weeks from the lab session
 **Total Points:** 100
-**Submission:** Upload your Jupyter notebook (.ipynb) to Moodle. All code cells must be executed with visible output.
+**Submission:** Upload your Jupyter notebook (.ipynb) and any collected data files to Moodle. All code cells must be executed with visible output.
+**Collaboration:** You may work in teams of 2–3. Each team submits one notebook.
 
 ---
 
-## Background
+## Overview
 
-Bogazici University's Department of Civil Engineering has produced generations of graduates who have pursued remarkably diverse career paths. In this lab, you will use Python's data science ecosystem — **pandas**, **NumPy**, **matplotlib**, and **string processing** — to clean, analyze, and visualize career trajectory data from our alumni.
+Your department has been producing civil engineers for decades — but where do they actually end up? Do most stay in structural engineering? How many switch to finance or tech? What universities do they pursue graduate studies at? Where in the world do they go?
 
-You will work with two datasets provided as Python dictionaries (no external files needed). Simply copy them into your notebook to get started.
+**Your mission:** Investigate the career pathways of Bogazici University Civil Engineering graduates using real, publicly available data. You will collect, organize, analyze, and visualize your findings using Python.
 
----
-
-## Dataset 1: Alumni Career Records
-
-```python
-import pandas as pd
-import numpy as np
-
-alumni_records = [
-    {"id": "CE-2020-001", "name": "  Ayse YILMAZ  ", "gender": "F", "sector": "Structural Engineering", "location": "Istanbul", "salary_tl": 42000, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-002", "name": "mehmet kaya", "gender": "M", "sector": "Geotechnical Engineering", "location": "Ankara", "salary_tl": 38500, "grad_year": 2020, "satisfaction": "Neutral"},
-    {"id": "CE-2020-003", "name": "ELIF   DEMIR", "gender": "F", "sector": "Graduate Studies (Domestic)", "location": "Istanbul", "salary_tl": None, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-004", "name": "can oezturk", "gender": "M", "sector": "Construction Management", "location": "Izmir", "salary_tl": 35000, "grad_year": 2020, "satisfaction": "Unsatisfied"},
-    {"id": "CE-2020-005", "name": "  ZEYNEP arslan ", "gender": "F", "sector": "Graduate Studies (Abroad)", "location": "Boston, USA", "salary_tl": None, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-006", "name": "burak   celik", "gender": "M", "sector": "Structural Engineering", "location": "Istanbul", "salary_tl": 44500, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-007", "name": "SELIN SAHIN  ", "gender": "F", "sector": "Transportation Planning", "location": "Ankara", "salary_tl": 39000, "grad_year": 2020, "satisfaction": "Neutral"},
-    {"id": "CE-2020-008", "name": "emre yildiz", "gender": "M", "sector": "Finance / Consulting", "location": "Istanbul", "salary_tl": 55000, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-009", "name": "deniz  KARA", "gender": "F", "sector": "Environmental Engineering", "location": "Bursa", "salary_tl": 36000, "grad_year": 2020, "satisfaction": "Neutral"},
-    {"id": "CE-2020-010", "name": "  ali guenes  ", "gender": "M", "sector": "Entrepreneurship", "location": "Istanbul", "salary_tl": 28000, "grad_year": 2020, "satisfaction": "Unsatisfied"},
-    {"id": "CE-2020-011", "name": "basak AYDIN", "gender": "F", "sector": "Structural Engineering", "location": "Istanbul", "salary_tl": 41000, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-012", "name": "OGUZ   polat ", "gender": "M", "sector": "Geotechnical Engineering", "location": "Trabzon", "salary_tl": 34000, "grad_year": 2020, "satisfaction": "Neutral"},
-    {"id": "CE-2020-013", "name": "irem erdogan", "gender": "F", "sector": "Graduate Studies (Abroad)", "location": "London, UK", "salary_tl": None, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-014", "name": " MURAT  aksoy", "gender": "M", "sector": "Construction Management", "location": "Antalya", "salary_tl": 37500, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-015", "name": "ceren   BAYRAK ", "gender": "F", "sector": "Graduate Studies (Domestic)", "location": "Istanbul", "salary_tl": None, "grad_year": 2020, "satisfaction": "Neutral"},
-    {"id": "CE-2020-016", "name": "hakan  KORKMAZ", "gender": "M", "sector": "Transportation Planning", "location": "Istanbul", "salary_tl": 40000, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-017", "name": "GAMZE   tekin", "gender": "F", "sector": "Structural Engineering", "location": "Ankara", "salary_tl": 43500, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-018", "name": "tolga YALCIN  ", "gender": "M", "sector": "Entrepreneurship", "location": "Istanbul", "salary_tl": 62000, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-019", "name": "  naz dogan", "gender": "F", "sector": "Graduate Studies (Abroad)", "location": "Munich, Germany", "salary_tl": None, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-020", "name": "SERKAN   ozkan", "gender": "M", "sector": "Finance / Consulting", "location": "Istanbul", "salary_tl": 58000, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-021", "name": "yagmur  KURT ", "gender": "F", "sector": "Environmental Engineering", "location": "Mersin", "salary_tl": 33000, "grad_year": 2020, "satisfaction": "Unsatisfied"},
-    {"id": "CE-2020-022", "name": "cem   ACAR", "gender": "M", "sector": "Structural Engineering", "location": "Kocaeli", "salary_tl": 39500, "grad_year": 2020, "satisfaction": "Neutral"},
-    {"id": "CE-2020-023", "name": "  PINAR  tas  ", "gender": "F", "sector": "Graduate Studies (Domestic)", "location": "Ankara", "salary_tl": None, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-024", "name": "onur KILIC", "gender": "M", "sector": "Construction Management", "location": "Istanbul", "salary_tl": 41000, "grad_year": 2020, "satisfaction": "Satisfied"},
-    {"id": "CE-2020-025", "name": "  ece   YILDIRIM", "gender": "F", "sector": "Structural Engineering", "location": "Istanbul", "salary_tl": 45000, "grad_year": 2020, "satisfaction": "Satisfied"},
-]
-
-df = pd.DataFrame(alumni_records)
-```
+There is no pre-made dataset. **You build the dataset.**
 
 ---
 
-## Dataset 2: Messy Survey Responses (Raw Text)
+## The Big Questions
 
-```python
-survey_responses = """
-CE-2020-001 | structural eng. | 5yrs exp | salary:42000TL | PE_license:yes
-CE-2020-002 | geotech eng | 4.5 yrs exp | salary:38500 TL | PE_license:no
-CE-2020-006 | structural eng. | 5 yrs exp | salary:44500TL | PE_license:YES
-CE-2020-008 | finance/consulting | 3yrs exp | salary:55000 TL | PE_license:N/A
-CE-2020-011 | structural eng | 4 yrs exp | salary:41000TL | PE_license:yes
-CE-2020-014 | construction mgmt | 5yrs exp | salary:37500 TL| PE_license:no
-CE-2020-017 | structural eng. | 5 yrs exp | salary:43500TL | PE_license:Yes
-CE-2020-018 | entrepreneurship | 3.5yrs exp | salary:62000 TL | PE_license:no
-CE-2020-020 | finance/consulting | 2 yrs exp | salary:58000TL | PE_license:N/A
-CE-2020-024 | construction mgmt | 4.5 yrs exp | salary:41000 TL | PE_license:no
-"""
-```
+Your investigation should aim to answer some (or all) of the following:
+
+1. What industries and job titles do Bogazici CE graduates hold today?
+2. What is the split between those who stayed in engineering vs. those who switched fields?
+3. How many pursued graduate studies? Where (which universities, which countries)?
+4. What companies and organizations employ the most Bogazici CE alumni?
+5. Are there noticeable generational shifts (e.g., do recent graduates leave engineering more often than older cohorts)?
+6. What is the geographic distribution — how many stayed in Turkey vs. went abroad?
+
+You do **not** need to answer all of these. Pick the questions that interest you most and that your data can support.
 
 ---
 
-## Part A: Data Cleaning with String Methods (25 points)
+## Part A: Data Collection (30 points)
 
-### Task 1: Name Standardization (10 points)
+This is the core of the lab. You need to gather real data about Bogazici CE alumni careers. Here are some approaches — use **at least two** different sources:
 
-The `name` column is messy — inconsistent capitalization, extra whitespace, and irregular spacing. Write a function that cleans each name into **proper title case** with single spaces.
+### Suggested Data Sources
 
-```
-"  Ayse YILMAZ  "    →  "Ayse Yilmaz"
-"mehmet kaya"         →  "Mehmet Kaya"
-"ELIF   DEMIR"        →  "Elif Demir"
-"can oezturk"         →  "Can Oezturk"
-```
+| Source | What You Can Find | How to Access |
+|---|---|---|
+| **LinkedIn** | Job titles, companies, locations, education history | Manual search, browse alumni pages |
+| **Bogazici University website** | Faculty listings, department pages, alumni spotlights | Web browsing, department pages |
+| **Google Scholar / ResearchGate** | Academic alumni — publications, affiliations, h-index | Search by name + "Bogazici" |
+| **Company websites** | Where alumni work, their roles, project portfolios | Google search for specific people |
+| **News articles / interviews** | Notable alumni, career stories, entrepreneurship | Google News, Turkish media |
+| **YOK (Higher Education Council)** | Academic faculty across Turkish universities | akademik.yok.gov.tr |
+| **Personal knowledge** | Upperclassmen, TAs, professors you know | Ask around! |
 
-**(a)** Write a function `clean_name(name)` that:
-1. Strips leading/trailing whitespace
-2. Collapses multiple internal spaces into a single space
-3. Converts to title case
+### What to Collect
 
-Apply it to the entire `name` column using `.apply()` and display the first 10 rows showing the before and after.
+For each alumnus you find, try to record as many of the following fields as possible:
 
-**(b)** Using string methods on the `id` column, extract just the **numeric ID** (the last 3 digits) into a new column called `id_num`. For example, `"CE-2020-001"` should produce the integer `1`.
+- **Name** (or anonymize as "Alumnus 1", "Alumnus 2", etc. if you prefer)
+- **Approximate graduation year** (or decade, e.g., "2010s")
+- **Current job title**
+- **Current employer / organization**
+- **Industry sector** (e.g., Structural Engineering, Construction, Finance, Academia, Tech, Government, etc.)
+- **Location** (city, country)
+- **Highest degree** (B.Sc., M.Sc., Ph.D.)
+- **Graduate school** (if applicable — name and country)
+- **Still in civil engineering?** (Yes / No / Partially)
 
-**(c)** Create a new column `initials` containing each person's initials (e.g., `"Ayse Yilmaz"` → `"A.Y."`). Use the cleaned name column and string operations.
+### Requirements
 
----
+**(a)** Collect data on **at least 30 alumni** (more is better). Document your sources — for each entry, note where you found the information (e.g., "LinkedIn search", "department website", "Google Scholar").
 
-### Task 2: Parsing Messy Survey Data with String Operations and Regex (15 points)
+**(b)** Organize your collected data into a **pandas DataFrame**. Each row is one alumnus, each column is one attribute. Save the DataFrame to a CSV file (`bogazici_ce_alumni.csv`).
 
-The `survey_responses` string contains semi-structured text data that needs to be parsed into a clean DataFrame.
-
-**(a)** Split the raw text into individual records (one per line, skipping empty lines). For each record, use `.split('|')` to separate the fields. Create a DataFrame called `survey_df` with columns: `id`, `sector`, `years_exp`, `salary`, `pe_license`.
-
-**(b)** Clean each column:
-- `id`: Strip whitespace
-- `sector`: Strip whitespace and convert to lowercase
-- `years_exp`: Extract the numeric value (e.g., `"5yrs exp"` → `5.0`, `"4.5 yrs exp"` → `4.5`). Use `re.findall()` or `re.search()` with an appropriate pattern.
-- `salary`: Extract the numeric salary value (e.g., `"salary:42000TL"` → `42000`). Use a regex pattern.
-- `pe_license`: Standardize to boolean (`True`/`False`). Treat `"yes"`, `"Yes"`, `"YES"` as `True`; `"no"` as `False`; `"N/A"` as `None` (use `np.nan`).
-
-**(c)** Display the cleaned `survey_df` and print a summary: how many alumni hold a PE license, what is the average years of experience, and what is the mean salary among survey respondents.
-
----
-
-## Part B: Data Analysis with Pandas and NumPy (30 points)
-
-### Task 3: Career Sector Analysis (10 points)
-
-Using the original `df` DataFrame:
-
-**(a)** Use `.value_counts()` to count the number of alumni in each career sector. What is the most common career path? What percentage of graduates remained in traditional engineering roles (Structural, Geotechnical, Environmental, Transportation, Construction Management)?
-
-**(b)** Group the data by `gender` and `sector` using `.groupby()`. Create a **cross-tabulation** (using `pd.crosstab()`) showing the count of male and female graduates in each sector. Which sector has the highest proportion of female graduates?
-
-**(c)** Compute the mean salary by sector (excluding `None` values for graduate students). Which sector pays the most on average? Use `.groupby()` and `.mean()`.
+**(c)** In a markdown cell, describe your data collection process:
+- Which sources did you use and why?
+- What challenges did you face (e.g., incomplete profiles, privacy settings, ambiguous information)?
+- How did you handle missing data?
+- Roughly how long did data collection take?
 
 ---
 
-### Task 4: Location and Salary Analysis (10 points)
+## Part B: Data Cleaning and Exploration (20 points)
 
-**(a)** Using string methods on the `location` column, create a new boolean column `is_abroad` that is `True` if the location contains a comma (indicating "City, Country" format). How many graduates are working/studying abroad?
+Real-world data is messy. Before analysis, you need to clean what you collected.
 
-**(b)** For graduates with salary data (not `None`), compute using NumPy:
-- Mean salary (`np.mean`)
-- Median salary (`np.median`)
-- Standard deviation (`np.std`)
-- The salary range (max − min)
+**(a)** Load your CSV and inspect it. Report:
+- Total number of records
+- Number of missing values per column
+- Data types of each column
 
-Print the results formatted with f-strings to zero decimal places and include "TL" as the unit.
+**(b)** Standardize your data:
+- Make sure industry/sector labels are consistent (e.g., don't have both "Structural Eng." and "Structural Engineering")
+- Standardize location names (e.g., decide on "Istanbul" vs. "İstanbul", "USA" vs. "United States")
+- Handle missing values — decide on a strategy and explain your choice
 
-**(c)** Create a new column `salary_category` that classifies each employed graduate as:
-- `"Below Average"` if salary < mean salary
-- `"Above Average"` if salary >= mean salary
-- `"N/A"` if salary is `None`
-
-How many graduates fall into each category?
-
----
-
-### Task 5: Satisfaction Analysis (10 points)
-
-**(a)** Compute the overall satisfaction distribution (count and percentage for each level: Satisfied, Neutral, Unsatisfied).
-
-**(b)** Group by `sector` and compute the satisfaction rate (proportion of "Satisfied" responses) for each sector. Which sector has the highest satisfaction rate? Which has the lowest?
-
-**(c)** Among graduates who left traditional engineering (Finance/Consulting and Entrepreneurship), what is the satisfaction rate? Compare it to the satisfaction rate of those in traditional engineering roles. Write a one-sentence interpretation of the comparison.
+**(c)** Create at least two **derived columns** that don't exist in the raw data but are useful for analysis. Examples:
+- `abroad` (True/False — is the person outside Turkey?)
+- `career_switch` (True/False — did they leave civil engineering?)
+- `decade` (graduation decade: "2000s", "2010s", "2020s")
+- `has_graduate_degree` (True/False)
 
 ---
 
-## Part C: Data Visualization with Matplotlib (30 points)
+## Part C: Analysis and Visualization (35 points)
 
-For all plots, follow these conventions:
-- Use the OO interface (`fig, ax = plt.subplots()`)
-- Include `ax.grid(True, alpha=0.3)`
-- Add descriptive titles, axis labels, and legends where appropriate
-- Use `plt.tight_layout()` before `plt.show()`
+Now answer the questions you set out to investigate. Create **at least four visualizations** and support each with a brief written interpretation (2–3 sentences).
 
----
+### Required Analyses (pick at least four)
 
-### Task 6: Career Distribution Visualization (10 points)
+1. **Career sector breakdown**: What proportion of graduates are in each sector? (bar chart or pie chart)
 
-**(a)** Create a **horizontal bar chart** showing the number of alumni in each career sector, sorted from most to least common. Use `color='steelblue'` for the bars. Add the count as a text annotation at the end of each bar.
+2. **Engineering vs. non-engineering**: What fraction stayed in engineering-related careers vs. switched to other fields? Does this vary by graduation decade?
 
-**(b)** Create a **pie chart** showing the proportion of graduates in three broad categories:
-- **Traditional Engineering** (Structural, Geotechnical, Environmental, Transportation, Construction Management)
-- **Graduate Studies** (Domestic + Abroad)
-- **Non-Engineering** (Finance/Consulting + Entrepreneurship)
+3. **Geographic distribution**: Where are Bogazici CE alumni located? (bar chart of top cities/countries, or a simple map if you're ambitious)
 
-Use `colors=['steelblue', 'indianred', 'goldenrod']` and display percentages on each slice with `autopct='%1.1f%%'`.
+4. **Graduate studies pipeline**: What fraction pursued M.Sc. or Ph.D.? Which universities appear most frequently? Which countries?
 
----
+5. **Top employers**: Which companies or organizations employ the most alumni? (horizontal bar chart)
 
-### Task 7: Salary and Gender Analysis (10 points)
+6. **Generational trends**: Has the career distribution shifted over time? Compare older graduates (pre-2010) vs. recent ones (2015+) if your data allows.
 
-**(a)** Create a **box plot** comparing salary distributions across the career sectors that have salary data. Rotate x-axis labels 45 degrees for readability. Title: "Salary Distribution by Career Sector (Class of 2020)".
+7. **Any other question** that your data can answer and that you find interesting.
 
-**(b)** Create a **grouped bar chart** showing the count of male vs. female graduates in each of the three broad categories defined in Task 6(b). Use `steelblue` for male and `indianred` for female. Include a legend.
+### Visualization Guidelines
+
+- Use matplotlib (or seaborn/plotly if you prefer)
+- Every plot needs a title, axis labels, and should be readable
+- After each plot, include a markdown cell with your interpretation: what does this plot tell us?
 
 ---
 
-### Task 8: Multi-Panel Summary Dashboard (10 points)
+## Part D: Findings Report (15 points)
 
-Create a single figure with a **2x2 grid of subplots** (`fig, axes = plt.subplots(2, 2, figsize=(14, 10))`) containing:
+Write a summary (300–500 words) in markdown cells at the end of your notebook. Address the following:
 
-1. **Top-left**: Bar chart of satisfaction levels (Satisfied, Neutral, Unsatisfied) with counts.
-2. **Top-right**: Scatter plot of years of experience vs. salary (from `survey_df`), colored by PE license status.
-3. **Bottom-left**: Histogram of salary distribution for all employed graduates (use 8 bins, `edgecolor='black'`).
-4. **Bottom-right**: Bar chart showing average salary by broad career category.
+**(a) Key Findings** — What are the 3–4 most interesting or surprising things you discovered about Bogazici CE career pathways? Support each finding with a specific number or visualization from your analysis.
 
-Add a main title with `fig.suptitle("Bogazici CE Class of 2020 — Career Pathways Dashboard", fontsize=14, fontweight='bold')`.
+**(b) Data Limitations** — What are the biggest limitations of your dataset? Consider:
+- Selection bias (who is visible on LinkedIn vs. who isn't?)
+- Sample size and representativeness
+- Missing data and its potential impact
+- Any assumptions you had to make
 
----
+**(c) Recommendations** — Based on your findings, what is one piece of advice you would give to a first-year CE student at Bogazici about planning their career? What would you tell the department about how they might better prepare students?
 
-## Part D: Reflection (15 points)
-
-### Task 9: Written Analysis (15 points)
-
-Write a short report (200–300 words) addressing the following, based on the results from your analysis:
-
-**(a)** What are the three most significant findings from the career data? Reference specific numbers or visualizations from your analysis.
-
-**(b)** Suppose the department wants to use this data to advise incoming students about career options. What are two limitations of drawing conclusions from this dataset? Think about sample size, data quality, and representativeness.
-
-**(c)** Propose one additional data field that would make this analysis more useful (e.g., GPA, internship experience, specialization track). Explain what question it would help answer and which Python tool (pandas groupby, matplotlib visualization, regex parsing, etc.) you would use to analyze it.
+**(d) Methodology Reflection** — If you had more time and resources, how would you improve this study? What additional data would you collect, and what tools would you use?
 
 ---
 
-## Submission Checklist
+## Bonus Challenges (up to +15 points)
 
-- [ ] All code cells executed with visible output
-- [ ] Names properly cleaned and standardized (Task 1)
-- [ ] Survey data parsed using regex and string methods (Task 2)
-- [ ] Pandas analysis complete with groupby, crosstab, and value_counts (Tasks 3–5)
-- [ ] All 6 plots rendered with proper formatting (Tasks 6–8)
-- [ ] Written reflection addresses all three parts (Task 9)
-- [ ] Notebook is well-organized with markdown headers for each part
+These are optional. Attempt them only after completing the main lab.
+
+- **[+5] Web scraping**: Write a Python script that programmatically collects data from a public web page (e.g., a faculty listing or company team page). Use `requests` and `BeautifulSoup` or similar tools.
+
+- **[+5] Interactive visualization**: Create an interactive plot using `plotly` (e.g., a hover-enabled bar chart or an interactive map showing alumni locations).
+
+- **[+5] Comparison study**: Find similar data about graduates from another Turkish university's CE department (e.g., METU, ITU) and compare the career distributions to Bogazici's. Are there meaningful differences?
+
+---
+
+## Tips for Success
+
+- **Start data collection early.** This is the most time-consuming part. Don't leave it to the last day.
+- **Divide the work** if working in a team — one person can search LinkedIn, another can search academic databases, etc.
+- **30 entries is the minimum.** Teams that collect 50+ and find interesting patterns will score higher.
+- **Quality matters more than quantity.** 30 well-documented entries with consistent fields are better than 80 sloppy ones.
+- **Document everything.** Your notebook should tell the story of your investigation from start to finish.
+- **Be ethical.** Use only publicly available information. Do not scrape private profiles or share personal data without consent. You may anonymize names if you wish.
+
+---
+
+## Grading Rubric
+
+| Component | Points | What We're Looking For |
+|---|---|---|
+| **Data Collection** | 30 | At least 30 entries, at least 2 sources, well-documented process |
+| **Data Cleaning** | 20 | Consistent formatting, handled missing values, useful derived columns |
+| **Analysis & Visualization** | 35 | At least 4 informative plots, correct use of pandas/numpy, written interpretations |
+| **Findings Report** | 15 | Thoughtful analysis of findings, honest about limitations, actionable recommendations |
+| **Bonus** | +15 | Web scraping, interactive plots, or comparison study |
 
 ---
 
