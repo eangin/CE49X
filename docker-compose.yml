@@ -1,0 +1,34 @@
+version: "3.9"
+
+# ── PostgreSQL database for local reproduction ───────────────────────────────
+# Usage:
+#   docker compose up -d          # start the database
+#   docker compose down           # stop (data preserved in volume)
+#   docker compose down -v        # stop AND delete all data
+#
+# After starting, set:
+#   export DATABASE_URL=postgresql://ce49x:ce49x@localhost:5432/conflict_monitoring
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ce49x-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ce49x
+      POSTGRES_PASSWORD: ce49x
+      POSTGRES_DB: conflict_monitoring
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d   # optional: seed SQL files
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ce49x -d conflict_monitoring"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pg_data:
+    driver: local
